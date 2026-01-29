@@ -10,36 +10,39 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const auth = 'Q4kKDVaaK0upvDqSM7FFkdila2vsBksZ'
+  // console.log("auth: ", process.env.AUTHENTICATION_API)
 
   const handleSearch = async () => {
     if (!searchQuery) return;
     setLoading(true);
 
     try {
-      // API pública do Mercado Livre (não precisa de chave para buscas simples)
-      const response = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${searchQuery}`);
+      const response = await fetch(
+        `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(searchQuery)}`,
+        {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${auth}`, // seu token aqui
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+      }
+
       const data = await response.json();
-
-      // Pegamos os 6 primeiros resultados
-      const formattedProducts = data.results.slice(0, 6).map(item => ({
-        id: item.id,
-        name: item.title,
-        price: item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-        oldPrice: (item.price * 1.15).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }), // Simulação de preço antigo
-        change: -15,
-        status: "low",
-        image: item.thumbnail.replace("-I.jpg", "-O.jpg") // Melhora a qualidade da imagem
-      }));
-
-      console.log("formattedProducts: ", formattedProducts)
-
-      setResults(formattedProducts);
-    } catch (error) {
-      console.error("Erro ao buscar produtos:", error);
+      console.log("Resultados: ", data.results);
+      setResults(data.results); // salva os resultados no estado
+    } catch (erro) {
+      console.error("Erro na busca: ", erro);
     } finally {
       setLoading(false);
     }
   };
+
 
   const watchedProducts = [
     { id: 1, name: "iPhone 15 Pro", price: "R$ 6.299", change: -12, status: "low" },
