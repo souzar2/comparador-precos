@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import {
   Search,
   PiggyBank,
-  TrendingDown,
-  Bell,
-  ArrowDownRight,
-  ArrowUpRight,
   BarChart3,
-  Tag,
   Filter
 } from 'lucide-react';
 
