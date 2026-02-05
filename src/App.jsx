@@ -14,32 +14,20 @@ function App() {
   // console.log("auth: ", process.env.AUTHENTICATION_API)
 
   const handleSearch = async () => {
-    if (!searchQuery) return;
-    setLoading(true);
-
+    const productIdentifier = "0123456789"; // exemplo de código EAN/UPC/ISBN 
+    const siteId = "MLB"; // Brasil (MLA seria Argentina) 
+    const status = "active"; // ou outro status válido 
+    const token = "SEU_ACCESS_TOKEN_AQUI"; // seu token OAuth válido 
     try {
       const response = await fetch(
-        `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(searchQuery)}`,
-        {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${auth}`, // seu token aqui
-            "Content-Type": "application/json"
-          }
-        }
+        `http://localhost:3001/api/products?product_identifier=0123456789`
       );
-
-      if (!response.ok) {
-        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
-      }
-
       const data = await response.json();
-      console.log("Resultados: ", data.results);
-      setResults(data.results); // salva os resultados no estado
+      console.log("data: ", data)
+      setResults(data.results);
+
     } catch (erro) {
-      console.error("Erro na busca: ", erro);
-    } finally {
-      setLoading(false);
+      console.error("Erro na busca por identificador:", erro);
     }
   };
 
